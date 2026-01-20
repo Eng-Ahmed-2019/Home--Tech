@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="HomeTech.API/HomeTech.API.csproj" />
+  <Project Path="HomeTech.Application/HomeTech.Application.csproj" />
+  <Project Path="HomeTech.Domain/HomeTech.Domain.csproj" />
+  <Project Path="HomeTech.Infrastructure/HomeTech.Infrastructure.csproj" />
+</Solution>
