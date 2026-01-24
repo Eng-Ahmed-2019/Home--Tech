@@ -1,0 +1,3 @@
+cd HomeTech.API
+dotnet user-secrets init
+dotnet user-secrets set SmtpPassword PASSWORD
