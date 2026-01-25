@@ -1,13 +1,15 @@
-﻿using MediatR;
-using System.Text;
-using HomeTech.Domain.Entities;
+﻿using HomeTech.Application.CQRS.Commands;
 using HomeTech.Application.DTOs;
-using Microsoft.AspNetCore.Identity;
+using HomeTech.Application.DTOs.Emails;
 using HomeTech.Application.Exceptions;
 using HomeTech.Application.Interfaces;
+using HomeTech.Domain.Entities;
+using HomeTech.Domain.Enums;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
-using HomeTech.Application.CQRS.Commands;
+using System.Text;
 
 namespace HomeTech.Application.CQRS.Handlers
 {
@@ -66,7 +68,12 @@ namespace HomeTech.Application.CQRS.Handlers
             {
                 To = user.Email!,
                 Subject = "تأكيد البريد الإلكتروني",
-                Body = $"اضغط هنا لتأكيد حسابك 👇<br/><a href='{confirmLink}'>تأكيد البريد</a>"
+                Template = EmailTemplate.ConfirmEmail,
+                Model = new ConfirmEmailModel
+                {
+                    FullName = user.FullName,
+                    ConfirmLink = confirmLink
+                }
             });
 
             return "تم إنشاء الحساب بنجاح 🎉 برجاء تأكيد بريدك الإلكتروني";

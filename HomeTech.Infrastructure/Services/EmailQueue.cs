@@ -10,7 +10,11 @@ namespace HomeTech.Infrastructure.Services
 
         public EmailQueue()
         {
-            _channel = Channel.CreateUnbounded<EmailJob>();
+            _channel = Channel.CreateBounded<EmailJob>(
+                new BoundedChannelOptions(1000)
+                {
+                    FullMode = BoundedChannelFullMode.Wait
+                });
         }
 
         public async ValueTask EnqueueEmailAsync(EmailJob job)

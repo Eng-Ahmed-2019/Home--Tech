@@ -8,6 +8,7 @@ namespace HomeTech.Infrastructure.Services
 {
     public class EmailBackgroundService : BackgroundService
     {
+        private const int MaxRetryCount = 3;
         private readonly IEmailQueue _emailQueue;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<EmailBackgroundService> _logger;
@@ -26,7 +27,7 @@ namespace HomeTech.Infrastructure.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                EmailJob? job = null;
+                EmailJob job;
 
                 try
                 {
@@ -37,12 +38,46 @@ namespace HomeTech.Infrastructure.Services
                     break;
                 }
 
-                if (job != null)
+                try
                 {
                     using var scope = _serviceScopeFactory.CreateScope();
                     var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+                    var renderer = scope.ServiceProvider.GetRequiredService<IEmailTemplateRenderer>();
+                    var htmlBody = await renderer.RenderAsync(
+                        job.Template,
+                        job.Model
+                    );
 
-                    await emailService.SendAsync(job.To, job.Subject, job.Body);
+                    await emailService.SendAsync(job.To, job.Subject, htmlBody);
+
+                    _logger.LogInformation(
+                        "Email sent successfully to {Email}",
+                        job.To
+                    );
+                }
+                catch (Exception ex)
+                {
+                    job.RetryCount++;
+
+                    _logger.LogError(
+                        ex,
+                        "Failed to send email to {Email}. Retry {Retry}/{MaxRetry}",
+                        job.To,
+                        job.RetryCount,
+                        MaxRetryCount
+                    );
+
+                    if (job.RetryCount < MaxRetryCount)
+                    {
+                        await _emailQueue.EnqueueEmailAsync(job);
+                    }
+                    else
+                    {
+                        _logger.LogCritical(
+                            "Email permanently failed for {Email}",
+                            job.To
+                        );
+                    }
                 }
             }
         }

@@ -1,8 +1,8 @@
 ﻿using MimeKit;
-using MailKit.Security;
 using MailKit.Net.Smtp;
-using HomeTech.Application.Interfaces;
+using MailKit.Security;
 using HomeTech.Application.Exceptions;
+using HomeTech.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace HomeTech.Infrastructure.Services
@@ -36,6 +36,7 @@ namespace HomeTech.Infrastructure.Services
             message.From.Add(MailboxAddress.Parse(smtpEmail));
             message.To.Add(MailboxAddress.Parse(to));
             message.Subject = subject;
+
             message.Body = new BodyBuilder
             {
                 HtmlBody = body
@@ -45,14 +46,8 @@ namespace HomeTech.Infrastructure.Services
             {
                 using var client = new SmtpClient();
 
-                await client.ConnectAsync(
-                    host,
-                    port,
-                    SecureSocketOptions.StartTls
-                );
-
+                await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
                 await client.AuthenticateAsync(smtpEmail, smtpPassword);
-
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
             }

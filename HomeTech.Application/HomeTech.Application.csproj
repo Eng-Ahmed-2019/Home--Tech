@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HomeTech.Domain\HomeTech.Domain.csproj" />
+    <Compile Remove="CQRS\Queries\**" />
+    <EmbeddedResource Remove="CQRS\Queries\**" />
+    <None Remove="CQRS\Queries\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\Queries\" />
+    <ProjectReference Include="..\HomeTech.Domain\HomeTech.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

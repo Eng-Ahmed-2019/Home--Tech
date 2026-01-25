@@ -36,8 +36,9 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerConfiguration();
 
 builder.Services.AddSingleton<IEmailQueue, EmailQueue>();
-builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHostedService<EmailBackgroundService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEmailTemplateRenderer, RazorEmailTemplateRenderer>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
