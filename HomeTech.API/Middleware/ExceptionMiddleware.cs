@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using FluentValidation;
+using HomeTech.Application.Common;
 using HomeTech.Application.Exceptions;
 
 namespace HomeTech.API.Middleware
@@ -28,28 +29,26 @@ namespace HomeTech.API.Middleware
             }
             catch (ValidationException ve)
             {
+                var errors = ve.Errors
+                    .Select(e => $"{e.PropertyName}: {e.ErrorMessage}")
+                    .ToList();
+
                 await WriteResponse(
                     context, HttpStatusCode.BadRequest,
-                    new
-                    {
-                        success = false,
-                        errors = ve.Errors.Select(e => new
-                        {
-                            field = e.PropertyName,
-                            error = e.ErrorMessage
-                        })
-                    }
+                    ApiResponse<string>.CreateErrorResponse(
+                        errors,
+                        "خطأ في التحقق من البيانات"
+                    )
                 );
             }
             catch (BaseApplicationException ex)
             {
                 await WriteResponse(context,
                     ex.StatusCode,
-                    new
-                    {
-                        success = false,
-                        message = ex.Message
-                    }
+                    ApiResponse<string>.CreateErrorResponse(
+                        new List<string> { ex.Message },
+                        "حدث خطأ"
+                    )
                 );
             }
             catch (Exception ex)
@@ -58,19 +57,16 @@ namespace HomeTech.API.Middleware
 
                 await WriteResponse(context,
                     HttpStatusCode.InternalServerError,
-                    new
-                    {
-                        success = false,
-                        message = "حدث خطأ غير متوقع",
-                        traceId = context.TraceIdentifier
-                    }
+                    ApiResponse<string>.CreateErrorResponse(
+                        new List<string> { "خطأ غير متوقع" }
+                    )
                 );
             }
         }
 
         private async Task WriteResponse
         (
-            HttpContext context, HttpStatusCode statusCode, object response
+            HttpContext context, HttpStatusCode statusCode, ApiResponse<string> response
         )
         {
             if (context.Response.HasStarted) return;

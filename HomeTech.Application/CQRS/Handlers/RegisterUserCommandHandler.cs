@@ -1,15 +1,16 @@
-﻿using HomeTech.Application.CQRS.Commands;
+﻿using MediatR;
+using System.Text;
+using HomeTech.Domain.Enums;
+using HomeTech.Domain.Entities;
 using HomeTech.Application.DTOs;
-using HomeTech.Application.DTOs.Emails;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using HomeTech.Application.Exceptions;
 using HomeTech.Application.Interfaces;
-using HomeTech.Domain.Entities;
-using HomeTech.Domain.Enums;
-using MediatR;
-using Microsoft.AspNetCore.Identity;
+using HomeTech.Application.DTOs.Emails;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
-using System.Text;
+using HomeTech.Application.CQRS.Commands;
 
 namespace HomeTech.Application.CQRS.Handlers
 {
@@ -19,15 +20,21 @@ namespace HomeTech.Application.CQRS.Handlers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailQueue _emailQueue;
         private readonly IConfiguration _config;
+        private readonly IAuditService _audit;
+        private readonly IHttpContextAccessor _http;
 
         public RegisterUserCommandHandler(
             UserManager<ApplicationUser> userManager,
             IEmailQueue emailQueue,
-            IConfiguration config)
+            IConfiguration config,
+            IAuditService audit,
+            IHttpContextAccessor http)
         {
             _userManager = userManager;
             _emailQueue = emailQueue;
             _config = config;
+            _audit = audit;
+            _http = http;
         }
 
         public async Task<string> Handle(
@@ -51,7 +58,15 @@ namespace HomeTech.Application.CQRS.Handlers
             if (!result.Succeeded)
             {
                 var errors = string.Join(" | ", result.Errors.Select(e => e.Description));
-                throw new FailedRegisterUserException(errors);
+                await _audit.LogActionAsync(
+                    userId: null,
+                    sessionId: null,
+                    action: "Failed User Registration",
+                    reason: errors,
+                    ipAddress: _http.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
+                    cancellationToken: cancellationToken
+                );
+                throw new FailedRegisterUserException(errors); 
             }
 
             var token = WebEncoders.Base64UrlEncode(
@@ -75,6 +90,16 @@ namespace HomeTech.Application.CQRS.Handlers
                     ConfirmLink = confirmLink
                 }
             });
+
+            var ip = _http.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+            await _audit.LogActionAsync(
+                userId: user.Id,
+                sessionId: null,
+                action: "User Registration",
+                reason: "New user registered",
+                ipAddress: ip,
+                cancellationToken: cancellationToken
+            );
 
             return "تم إنشاء الحساب بنجاح 🎉 برجاء تأكيد بريدك الإلكتروني";
         }

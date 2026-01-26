@@ -6,17 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="CQRS\Queries\**" />
-    <EmbeddedResource Remove="CQRS\Queries\**" />
-    <None Remove="CQRS\Queries\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\HomeTech.Domain\HomeTech.Domain.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HomeTech.Domain\HomeTech.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+	<ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="MailKit" Version="4.14.1" />
