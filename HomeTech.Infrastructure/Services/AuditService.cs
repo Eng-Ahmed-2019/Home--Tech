@@ -1,16 +1,15 @@
 ﻿using HomeTech.Domain.Entities;
-using HomeTech.Infrastructure.Data;
 using HomeTech.Application.Interfaces;
 
 namespace HomeTech.Infrastructure.Services
 {
     public class AuditService : IAuditService
     {
-        private readonly HomeTechDbContext _dbContext;
+        private readonly AuditQueue _queue;
 
-        public AuditService(HomeTechDbContext dbContext)
+        public AuditService(AuditQueue queue)
         {
-            _dbContext = dbContext;
+            _queue = queue;
         }
 
         public async Task LogActionAsync(
@@ -21,15 +20,16 @@ namespace HomeTech.Infrastructure.Services
             string ipAddress,
             CancellationToken cancellationToken = default)
         {
-            _dbContext.AuditLogs.Add(new AuditLog
+            var log = new AuditLog
             {
                 UserId = userId,
                 SessionId = sessionId,
                 Action = action,
                 Reason = reason,
                 IpAddress = ipAddress
-            });
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            };
+
+            await _queue.Queue.Writer.WriteAsync(log, cancellationToken);
         }
     }
 }

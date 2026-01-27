@@ -36,6 +36,7 @@ public class JwtService : IJwtService
             new(JwtRegisteredClaimNames.Sub, user.Id),
             new(ClaimTypes.NameIdentifier, user.Id),
             new("sessionId", sessionId.ToString()),
+            new("ip", ipAddress),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -57,7 +58,7 @@ public class JwtService : IJwtService
                 int.Parse(_config["Jwt:RefreshTokenDays"]!)),
             IpAddress = ipAddress
         });
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(CancellationToken.None);
 
         return new LoginResponseDto
         {

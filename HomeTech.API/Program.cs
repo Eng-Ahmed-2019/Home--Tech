@@ -36,6 +36,11 @@ builder.Services.AddRateLimiter(r =>
         o.Window = TimeSpan.FromMinutes(5);
         o.PermitLimit = 3;
     });
+    r.AddFixedWindowLimiter("admin", o =>
+    {
+        o.Window = TimeSpan.FromMinutes(5);
+        o.PermitLimit = 30;
+    });
 });
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -46,6 +51,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateLocationValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateLocationValidator>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -55,6 +62,18 @@ builder.Services.AddMediatR(cfg =>
         typeof(LoginQueryHandler).Assembly);
     cfg.RegisterServicesFromAssembly(
         typeof(LogoutCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(CreateLocationCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(UpdateLocationCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(DeleteLocationCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(GetAllLocationQueryHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(GetMainLocationsHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(GetSubLocationsQueryHandler).Assembly);
 });
 
 builder.Services.AddTransient(
@@ -67,11 +86,15 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerConfiguration();
 
 builder.Services.AddSingleton<IEmailQueue, EmailQueue>();
+builder.Services.AddSingleton<AuditQueue>();
 builder.Services.AddHostedService<EmailBackgroundService>();
+builder.Services.AddHostedService<AuditBackgroundService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailTemplateRenderer, RazorEmailTemplateRenderer>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<ITokenReplayService, TokenReplayService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

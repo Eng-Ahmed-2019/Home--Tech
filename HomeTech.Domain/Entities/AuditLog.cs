@@ -9,5 +9,7 @@
         public string Reason { get; set; } = default!;
         public string IpAddress { get; set; } = default!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string Hash { get; set; } = default!;
+        public string? PreviousHash { get; set; }
     }
 }

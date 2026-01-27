@@ -15,5 +15,51 @@ namespace HomeTech.Infrastructure.Data
         public DbSet<UserSession> UserSessions => Set<UserSession>();
         public DbSet<BannedIp> BannedIps => Set<BannedIp>();
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+        public DbSet<Location> Locations => Set<Location>();
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Location>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.HasIndex(x => x.Name).IsUnique();
+                e.HasIndex(x => new { x.ParentId, x.IsActive });
+                e.Property(x => x.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+                e.HasOne(x => x.Parent)
+                    .WithMany(x => x.SubLocations)
+                    .HasForeignKey(x => x.ParentId)
+                    .OnDelete(DeleteBehavior.Restrict);
+                e.HasQueryFilter(x => !x.IsDeleted);
+            });
+
+            builder.Entity<AuditLog>()
+                .Property(x => x.Hash)
+                .IsRequired();
+
+            builder.Entity<AuditLog>()
+                .HasIndex(x => x.CreatedAt);
+
+            builder.Entity<AuditLog>()
+                .Property(x => x.Hash)
+                .HasMaxLength(64);
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken ct)
+        {
+            foreach (var entry in ChangeTracker.Entries<Location>())
+            {
+                if (entry.State == EntityState.Added)
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
+
+                if (entry.State == EntityState.Modified)
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
+            }
+
+            return await base.SaveChangesAsync(ct);
+        }
     }
 }
