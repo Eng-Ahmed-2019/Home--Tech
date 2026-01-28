@@ -22,7 +22,8 @@ public class JwtService : IJwtService
         _context = context;
     }
 
-    public async Task<LoginResponseDto> GenerateTokenAsync(ApplicationUser user, string ipAddress)
+    public async Task<LoginResponseDto> GenerateTokenAsync
+        (ApplicationUser user, string ipAddress)
     {
         var sessionId = Guid.NewGuid();
         var refreshToken = Guid.NewGuid().ToString("N");
@@ -56,7 +57,8 @@ public class JwtService : IJwtService
             RefreshToken = refreshToken,
             ExpiresAt = DateTime.UtcNow.AddDays(
                 int.Parse(_config["Jwt:RefreshTokenDays"]!)),
-            IpAddress = ipAddress
+            IpAddress = ipAddress,
+            IsRevoked = false
         });
         await _context.SaveChangesAsync(CancellationToken.None);
 

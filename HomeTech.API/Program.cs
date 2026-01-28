@@ -38,7 +38,7 @@ builder.Services.AddRateLimiter(r =>
     });
     r.AddFixedWindowLimiter("admin", o =>
     {
-        o.Window = TimeSpan.FromMinutes(5);
+        o.Window = TimeSpan.FromMinutes(1);
         o.PermitLimit = 30;
     });
 });
@@ -53,6 +53,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateLocationValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateLocationValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCategoryValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateCategoryValidator>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -74,6 +76,14 @@ builder.Services.AddMediatR(cfg =>
         typeof(GetMainLocationsHandler).Assembly);
     cfg.RegisterServicesFromAssembly(
         typeof(GetSubLocationsQueryHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(CreateCategoryCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(UpdateCategoryCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(DeleteCategoryCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(GetAllCategoryQueryHandler).Assembly);
 });
 
 builder.Services.AddTransient(
@@ -95,6 +105,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ITokenReplayService, TokenReplayService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

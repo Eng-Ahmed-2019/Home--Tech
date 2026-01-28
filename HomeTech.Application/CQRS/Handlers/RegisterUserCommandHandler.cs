@@ -48,7 +48,8 @@ namespace HomeTech.Application.CQRS.Handlers
             {
                 FullName = request.Dto.FullName,
                 UserName = request.Dto.Email,
-                Email = request.Dto.Email
+                Email = request.Dto.Email,
+                Gender = request.Dto.Gender
             };
 
             var result = await _userManager.CreateAsync(

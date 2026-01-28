@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HomeTech.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace HomeTech.Domain.Entities
 {
@@ -6,6 +7,7 @@ namespace HomeTech.Domain.Entities
     {
         public string FullName { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
+        public Gender Gender { set; get; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

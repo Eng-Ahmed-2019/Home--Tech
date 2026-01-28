@@ -42,6 +42,12 @@ namespace HomeTech.Application.Validator
                     .WithMessage("كلمة المرور يجب ألا تحتوي على البريد الإلكتروني أو جزء منه")
                 .Must(NotBeCommonPassword)
                     .WithMessage("كلمة المرور ضعيفة أو شائعة جدًا");
+
+            RuleFor(r => r.Gender)
+                .NotEmpty()
+                .WithMessage("برجاء تحديد النوع")
+                .IsInEnum()
+                .WithMessage("النوع غير صالح");
         }
 
         private bool HaveAtLeastUniqueCharacters(string password)

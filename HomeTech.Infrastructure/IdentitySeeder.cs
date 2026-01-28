@@ -20,7 +20,7 @@ namespace HomeTech.Infrastructure
             await CreateUserAsync(
                 userManager,
                 "a7med.2001.bahej@gmail.com",
-                "Ahmed Gamal Gaber, Admin",
+                "Admin, Ahmed Gamal Gaber",
                 Roles.Admin,
                 "946201.Com.Com"
             );
@@ -28,7 +28,7 @@ namespace HomeTech.Infrastructure
             await CreateUserAsync(
                 userManager,
                 "hakeamsoma@gmail.com",
-                "Ismail Abd ElHakeem, Manager",
+                "Manaegr, Ismail Abd ElHakeem",
                 Roles.Manager,
                 "Mahmoud123"
             );
@@ -36,7 +36,7 @@ namespace HomeTech.Infrastructure
             await CreateUserAsync(
                 userManager,
                 "zeko80324@gmail.com",
-                "Mahmoud fawzy fahmy, Manager",
+                "Manaegr, Mahmoud fawzy fahmy",
                 Roles.Manager,
                 "Mahmoud132001"
             );
@@ -44,7 +44,7 @@ namespace HomeTech.Infrastructure
             await CreateUserAsync(
                 userManager,
                 "abdo.mostafa69444@gmail.com",
-                "Abdo Mostafa Samna, Manager",
+                "Manaegr, Abdo Mostafa Samna",
                 Roles.Manager,
                 "Abdo1234@"
             );

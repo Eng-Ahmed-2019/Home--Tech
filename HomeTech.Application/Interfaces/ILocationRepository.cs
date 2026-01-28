@@ -8,8 +8,8 @@ namespace HomeTech.Application.Interfaces
         Task<bool> ExistsByNameAsync(string name, int? ignoreId = null, CancellationToken ct = default);
         Task<Location?> GetByIdAsync(int id, CancellationToken ct);
         Task AddAsync(Location location, CancellationToken ct);
-        void Update(Location location);
-        Task SoftDeleteAsync(Location location);
+        Task<bool> Update(Location location);
+        Task<bool> SoftDeleteAsync(Location location);
         Task<PagedResult<Location>> GetMainAsync(int page, int pageSize, CancellationToken ct);
         Task<PagedResult<Location>> GetSubAsync(int parentId, int page, int pageSize, CancellationToken ct);
         Task SaveChangesAsync(CancellationToken ct);

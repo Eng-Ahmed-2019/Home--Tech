@@ -9,6 +9,7 @@ namespace HomeTech.Application.Interfaces
         DbSet<Location> Locations { get; }
         DbSet<AuditLog> AuditLogs { get; }
         DbSet<BannedIp> BannedIps { get; }
+        DbSet<Category> Categories { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

@@ -10,10 +10,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HomeTech.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     [EnableRateLimiting("admin")]
-    [Authorize(Roles = Roles.Admin)]
     public class LocationsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -23,7 +23,6 @@ namespace HomeTech.API.Controllers
             _mediator = mediator;
         }
 
-        [Authorize]
         [HttpGet("main-locations")]
         public async Task<IActionResult> GetMain(
             [FromQuery] int page = 1,
@@ -37,7 +36,6 @@ namespace HomeTech.API.Controllers
                 .CreateSuccessResponse(result));
         }
 
-        [Authorize]
         [HttpGet("{parentId}/sub-locations")]
         public async Task<IActionResult> GetSub(
             int parentId,
@@ -53,6 +51,7 @@ namespace HomeTech.API.Controllers
         }
 
         [HttpPost("create-locations")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create([FromBody] CreateLocationDto dto, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new CreateLocationCommand(dto), cancellationToken);
@@ -75,6 +74,7 @@ namespace HomeTech.API.Controllers
         }
 
         [HttpPut("update-location")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Update([FromBody] UpdateLocationDto dto, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new UpdateLocationCommand(dto), cancellationToken);
@@ -97,6 +97,7 @@ namespace HomeTech.API.Controllers
         }
 
         [HttpDelete("Delete-location")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete([FromBody] DeleteLocationDto dto, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new DeleteLocationCommand(dto), cancellationToken);
@@ -109,6 +110,7 @@ namespace HomeTech.API.Controllers
                     )
                 );
             }
+
             return Ok(
                 ApiResponse<bool>.CreateSuccessResponse(
                     result,
@@ -122,7 +124,7 @@ namespace HomeTech.API.Controllers
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAllLocationsQuery(), cancellationToken);
-            if (result == null)
+            if (!result.Any())
             {
                 return NotFound(
                     ApiResponse<string>.CreateErrorResponse(

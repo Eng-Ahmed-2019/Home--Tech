@@ -16,6 +16,7 @@ namespace HomeTech.Infrastructure.Data
         public DbSet<BannedIp> BannedIps => Set<BannedIp>();
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
         public DbSet<Location> Locations => Set<Location>();
+        public DbSet<Category> Categories => Set<Category>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -36,6 +37,19 @@ namespace HomeTech.Infrastructure.Data
                 e.HasQueryFilter(x => !x.IsDeleted);
             });
 
+            builder.Entity<Category>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.HasIndex(x => x.Name).IsUnique();
+                e.HasIndex(x => x.IsActive);
+                e.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+                e.Property(x => x.RowVersion)
+                .IsRowVersion();
+                e.HasQueryFilter(x => !x.IsDeleted);
+            });
+
             builder.Entity<AuditLog>()
                 .Property(x => x.Hash)
                 .IsRequired();
@@ -50,13 +64,13 @@ namespace HomeTech.Infrastructure.Data
 
         public override async Task<int> SaveChangesAsync(CancellationToken ct)
         {
-            foreach (var entry in ChangeTracker.Entries<Location>())
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
             {
                 if (entry.State == EntityState.Added)
-                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                    entry.Entity.MarkCreated();
 
                 if (entry.State == EntityState.Modified)
-                    entry.Entity.UpdatedAt = DateTime.UtcNow;
+                    entry.Entity.MarkUpdated();
             }
 
             return await base.SaveChangesAsync(ct);

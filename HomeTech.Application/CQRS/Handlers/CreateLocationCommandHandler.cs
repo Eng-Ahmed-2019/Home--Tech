@@ -51,7 +51,8 @@ namespace HomeTech.Application.CQRS.Handlers
                 reason: $"Created location: {location.Name}",
                 ipAddress: _httpContextAccessor.HttpContext!
                     .Connection.RemoteIpAddress!.ToString() ?? "UnKnown",
-                ct);
+                ct
+            );
 
             return "تم انشاء الموقع بنجاح";
         }

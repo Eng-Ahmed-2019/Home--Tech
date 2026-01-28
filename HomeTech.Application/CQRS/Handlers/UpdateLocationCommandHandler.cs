@@ -33,7 +33,7 @@ namespace HomeTech.Application.CQRS.Handlers
             location.Name = command.Dto.Name;
             location.IsActive = command.Dto.IsActive;
 
-            _locationRepository.Update(location);
+            await _locationRepository.Update(location);
             await _locationRepository.SaveChangesAsync(cancellationToken);
 
             var UserId = _httpContextAccessor.HttpContext?

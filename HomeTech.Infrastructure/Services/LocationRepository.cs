@@ -24,7 +24,8 @@ namespace HomeTech.Infrastructure.Services
                 .AnyAsync(x =>
                     x.Name == name &&
                     (!ignoreId.HasValue || x.Id != ignoreId),
-                    ct);
+                    ct
+                );
         }
 
         public async Task<Location?> GetByIdAsync(int id, CancellationToken ct)
@@ -33,14 +34,24 @@ namespace HomeTech.Infrastructure.Services
         public async Task AddAsync(Location location, CancellationToken ct)
             => await _context.Locations.AddAsync(location, ct);
 
-        public void Update(Location location)
-            => _context.Locations.Update(location);
-
-        public Task SoftDeleteAsync(Location location)
+        public Task<bool> Update(Location location)
         {
-            location.IsDeleted = true;
-            location.UpdatedAt = DateTime.UtcNow;
-            return Task.CompletedTask;
+            if (location == null) return Task.FromResult(false);
+
+            location.MarkUpdated();
+            _context.Locations.Update(location);
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> SoftDeleteAsync(Location location)
+        {
+            if (location == null) return Task.FromResult(false);
+
+            location.SoftDelete();
+            location.MarkUpdated();
+
+            return Task.FromResult(true);
         }
 
         public async Task<PagedResult<Location>> GetMainAsync(
