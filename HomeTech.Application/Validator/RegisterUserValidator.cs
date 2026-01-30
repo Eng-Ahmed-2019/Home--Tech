@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
-using HomeTech.Application.DTOs;
+using HomeTech.Application.CQRS.Commands;
 
 namespace HomeTech.Application.Validator
 {
     public class RegisterUserValidator
-        : AbstractValidator<RegisterUserDto>
+        : AbstractValidator<RegisterUserCommand>
     {
         private static readonly HashSet<string> CommonPasswords = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -20,16 +20,16 @@ namespace HomeTech.Application.Validator
 
         public RegisterUserValidator()
         {
-            RuleFor(x => x.FullName)
+            RuleFor(x => x.Dto.FullName)
                 .NotEmpty().WithMessage("اسم المستخدم مطلوب")
                 .MinimumLength(3).WithMessage("اسم المستخدم يجب أن يكون 3 أحرف على الأقل")
                 .MaximumLength(20).WithMessage("اسم المستخدم يجب أن لا يتجاوز 20 حرفًا");
 
-            RuleFor(x => x.Email)
+            RuleFor(x => x.Dto.Email)
                 .NotEmpty().WithMessage("البريد الإلكتروني مطلوب")
                 .EmailAddress().WithMessage("البريد الإلكتروني غير صالح");
 
-            RuleFor(x => x.Password)
+            RuleFor(x => x.Dto.Password)
                 .NotEmpty().WithMessage("كلمة المرور مطلوبة")
                 .MinimumLength(12).WithMessage("كلمة المرور يجب أن تكون 12 حرفًا على الأقل")
                 .Matches("[A-Z]").WithMessage("كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل")
@@ -43,9 +43,7 @@ namespace HomeTech.Application.Validator
                 .Must(NotBeCommonPassword)
                     .WithMessage("كلمة المرور ضعيفة أو شائعة جدًا");
 
-            RuleFor(r => r.Gender)
-                .NotEmpty()
-                .WithMessage("برجاء تحديد النوع")
+            RuleFor(r => r.Dto.Gender)
                 .IsInEnum()
                 .WithMessage("النوع غير صالح");
         }
@@ -55,11 +53,11 @@ namespace HomeTech.Application.Validator
             return password.Distinct().Count() >= 4;
         }
 
-        private bool NotContainEmail(RegisterUserDto model, string password)
+        private bool NotContainEmail(RegisterUserCommand model, string password)
         {
-            if (string.IsNullOrWhiteSpace(model.Email)) return true;
+            if (string.IsNullOrWhiteSpace(model.Dto.Email)) return true;
 
-            var emailParts = model.Email
+            var emailParts = model.Dto.Email
                 .Split('@', StringSplitOptions.RemoveEmptyEntries)
                 .Select(p => p.ToLower());
 

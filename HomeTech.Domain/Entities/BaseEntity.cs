@@ -14,6 +14,9 @@
             => UpdatedAt = DateTime.UtcNow;
 
         public void SoftDelete()
-            => IsDeleted = true;
+        {
+            IsDeleted = true;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

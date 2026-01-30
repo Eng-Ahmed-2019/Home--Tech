@@ -25,52 +25,69 @@ namespace HomeTech.Infrastructure.Data
             builder.Entity<Location>(e =>
             {
                 e.HasKey(x => x.Id);
+
                 e.HasIndex(x => x.Name).IsUnique();
                 e.HasIndex(x => new { x.ParentId, x.IsActive });
+
                 e.Property(x => x.Name)
                     .IsRequired()
                     .HasMaxLength(100);
+
                 e.HasOne(x => x.Parent)
                     .WithMany(x => x.SubLocations)
                     .HasForeignKey(x => x.ParentId)
                     .OnDelete(DeleteBehavior.Restrict);
+
                 e.HasQueryFilter(x => !x.IsDeleted);
             });
 
             builder.Entity<Category>(e =>
             {
                 e.HasKey(x => x.Id);
+
                 e.HasIndex(x => x.Name).IsUnique();
                 e.HasIndex(x => x.IsActive);
+
                 e.Property(x => x.Name)
-                .IsRequired()
-                .HasMaxLength(100);
+                    .IsRequired()
+                    .HasMaxLength(100);
+
                 e.Property(x => x.RowVersion)
-                .IsRowVersion();
+                    .IsRowVersion();
+
                 e.HasQueryFilter(x => !x.IsDeleted);
             });
 
-            builder.Entity<AuditLog>()
-                .Property(x => x.Hash)
-                .IsRequired();
+            builder.Entity<AuditLog>(e =>
+            {
+                e.Property(x => x.Hash)
+                    .IsRequired()
+                    .HasMaxLength(64);
 
-            builder.Entity<AuditLog>()
-                .HasIndex(x => x.CreatedAt);
-
-            builder.Entity<AuditLog>()
-                .Property(x => x.Hash)
-                .HasMaxLength(64);
+                e.HasIndex(x => x.CreatedAt);
+            });
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken ct)
         {
             foreach (var entry in ChangeTracker.Entries<BaseEntity>())
             {
-                if (entry.State == EntityState.Added)
-                    entry.Entity.MarkCreated();
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.MarkCreated();
+                        break;
 
-                if (entry.State == EntityState.Modified)
-                    entry.Entity.MarkUpdated();
+                    case EntityState.Modified:
+                        entry.Entity.MarkUpdated();
+                        break;
+
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.Entity.SoftDelete();
+                        entry.Entity.MarkUpdated();
+                        break;
+                }
             }
 
             return await base.SaveChangesAsync(ct);

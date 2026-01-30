@@ -8,6 +8,7 @@ namespace HomeTech.Domain.Entities
         public string FullName { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
         public Gender Gender { set; get; }
+        public string? PendingEmail { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

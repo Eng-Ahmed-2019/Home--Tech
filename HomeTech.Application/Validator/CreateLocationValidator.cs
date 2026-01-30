@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
-using HomeTech.Application.DTOs;
 using HomeTech.Application.Interfaces;
+using HomeTech.Application.CQRS.Commands;
 
 namespace HomeTech.Application.Validator
 {
-    public class CreateLocationValidator : AbstractValidator<CreateLocationDto>
+    public class CreateLocationValidator : AbstractValidator<CreateLocationCommand>
     {
         private readonly ILocationRepository _locationRepository;
 
@@ -12,7 +12,7 @@ namespace HomeTech.Application.Validator
         {
             _locationRepository = locationRepository;
 
-            RuleFor(l => l.Name)
+            RuleFor(l => l.Dto.Name)
                 .NotEmpty().WithMessage("اسم الموقع مطلوب")
                 .MinimumLength(3).WithMessage("يجب ان يكون اسم الموقع اكبر من 3 احرف")
                 .MaximumLength(100).WithMessage("يجب ان يكون اسم الموقع اقل من 100 حرف");
@@ -20,7 +20,7 @@ namespace HomeTech.Application.Validator
             RuleFor(l => l)
                 .MustAsync(async (dto, ct) =>
                     !await _locationRepository
-                        .ExistsByNameAsync(dto.Name, null, ct))
+                        .ExistsByNameAsync(dto.Dto.Name, null, ct))
                 .WithMessage("هذا الاسم موجود بالفعل");
         }
     }

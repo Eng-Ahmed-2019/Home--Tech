@@ -41,6 +41,21 @@ builder.Services.AddRateLimiter(r =>
         o.Window = TimeSpan.FromMinutes(1);
         o.PermitLimit = 30;
     });
+    r.AddFixedWindowLimiter("email", o =>
+    {
+        o.Window = TimeSpan.FromMinutes(10);
+        o.PermitLimit = 3;
+    });
+    r.AddFixedWindowLimiter("profile", o =>
+    {
+        o.Window = TimeSpan.FromMinutes(10);
+        o.PermitLimit = 3;
+    });
+    r.AddFixedWindowLimiter("delete", o =>
+    {
+        o.Window = TimeSpan.FromMinutes(10);
+        o.PermitLimit = 3;
+    });
 });
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -55,6 +70,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateLocationValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateLocationValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateCategoryValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateCategoryValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordValidator>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -84,6 +101,18 @@ builder.Services.AddMediatR(cfg =>
         typeof(DeleteCategoryCommandHandler).Assembly);
     cfg.RegisterServicesFromAssembly(
         typeof(GetAllCategoryQueryHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(UpdateUserCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(DeleteAccountCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(ConfirmEmailCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(ChangeEmailCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(ReactivateAccountCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(ChangePasswordCommandHandler).Assembly);
 });
 
 builder.Services.AddTransient(

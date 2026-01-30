@@ -2,5 +2,5 @@
 
 namespace HomeTech.Application.CQRS.Commands
 {
-    public record LogoutCommand(Guid SessionId) : IRequest;
+    public record LogoutCommand(Guid SessionId) : IRequest<bool>;
 }

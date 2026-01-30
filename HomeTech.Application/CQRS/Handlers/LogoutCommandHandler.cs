@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using HomeTech.Application.Interfaces;
 using HomeTech.Application.CQRS.Commands;
 
-public class LogoutCommandHandler : IRequestHandler<LogoutCommand>
+public class LogoutCommandHandler : IRequestHandler<LogoutCommand, bool>
 {
     private readonly IApplicationDbContext _db;
     private readonly IAuditService _audit;
@@ -17,11 +17,11 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand>
         _http = http;
     }
 
-    public async Task Handle(LogoutCommand request, CancellationToken ct)
+    public async Task<bool> Handle(LogoutCommand request, CancellationToken ct)
     {
         var session = await _db.UserSessions
             .FirstOrDefaultAsync(x => x.Id == request.SessionId, ct);
-        if (session == null) return;
+        if (session == null) return false;
 
         session.IsRevoked = true;
         await _db.SaveChangesAsync(ct);
@@ -35,5 +35,7 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand>
             ipAddress: ip,
             cancellationToken: ct
         );
+
+        return true;
     }
 }

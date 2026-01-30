@@ -31,6 +31,15 @@ namespace HomeTech.API.Controllers
         {
             var result = await _mediator.Send(
                 new GetMainLocationsQuery(page, pageSize), ct);
+            if (result == null)
+            {
+                return BadRequest(
+                    ApiResponse<PagedResult<LocationDto>>.CreateErrorResponse(
+                        new List<string> { "عملية غير ناجحة" },
+                        "لم يتم جلب البيانات بنجاح"
+                    )
+                );
+            }
 
             return Ok(ApiResponse<PagedResult<LocationDto>>
                 .CreateSuccessResponse(result));
@@ -45,6 +54,15 @@ namespace HomeTech.API.Controllers
         {
             var result = await _mediator.Send(
                 new GetSubLocationsQuery(parentId, page, pageSize), ct);
+            if (result == null)
+            {
+                return BadRequest(
+                    ApiResponse<PagedResult<LocationDto>>.CreateErrorResponse(
+                        new List<string> { "عملية غير ناجحة" },
+                        "لم يتم جلب البيانات بنجاح"
+                    )
+                );
+            }
 
             return Ok(ApiResponse<PagedResult<LocationDto>>
                 .CreateSuccessResponse(result));
@@ -105,7 +123,7 @@ namespace HomeTech.API.Controllers
             {
                 return NotFound(
                     ApiResponse<bool>.CreateErrorResponse(
-                        new List<string> { "عملية فاشلة" },
+                        new List<string> { "عملية غير ناجحة" },
                         "لم يتم حذف الموقع بنجاح"
                     )
                 );
@@ -119,7 +137,7 @@ namespace HomeTech.API.Controllers
             );
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("Get-All-Locations")]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
@@ -127,8 +145,8 @@ namespace HomeTech.API.Controllers
             if (!result.Any())
             {
                 return NotFound(
-                    ApiResponse<string>.CreateErrorResponse(
-                        new List<string> { "عملية فاشلة" },
+                    ApiResponse<List<LocationDto>>.CreateErrorResponse(
+                        new List<string> { "عملية غير ناجحة" },
                         "لم يتم جلب المواقع بنجاح, حاول مرة اخري"
                     )
                 );

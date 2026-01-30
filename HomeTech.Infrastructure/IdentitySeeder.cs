@@ -1,4 +1,5 @@
-﻿using HomeTech.Domain.Entities;
+﻿using HomeTech.Domain.Enums;
+using HomeTech.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,7 +23,8 @@ namespace HomeTech.Infrastructure
                 "a7med.2001.bahej@gmail.com",
                 "Admin, Ahmed Gamal Gaber",
                 Roles.Admin,
-                "946201.Com.Com"
+                "946201.Com.Com",
+                Gender.Male
             );
 
             await CreateUserAsync(
@@ -30,7 +32,17 @@ namespace HomeTech.Infrastructure
                 "hakeamsoma@gmail.com",
                 "Manaegr, Ismail Abd ElHakeem",
                 Roles.Manager,
-                "Mahmoud123"
+                "Mahmoud123",
+                Gender.Male
+            );
+
+            await CreateUserAsync(
+                userManager,
+                "kokoeldarsh9@gmail.com",
+                "Manaegr, Mahmoud Abo ElSouad",
+                Roles.Manager,
+                "Qwertqwert11@",
+                Gender.Male
             );
 
             await CreateUserAsync(
@@ -38,7 +50,8 @@ namespace HomeTech.Infrastructure
                 "zeko80324@gmail.com",
                 "Manaegr, Mahmoud fawzy fahmy",
                 Roles.Manager,
-                "Mahmoud132001"
+                "Mahmoud132001",
+                Gender.Male
             );
 
             await CreateUserAsync(
@@ -46,7 +59,8 @@ namespace HomeTech.Infrastructure
                 "abdo.mostafa69444@gmail.com",
                 "Manaegr, Abdo Mostafa Samna",
                 Roles.Manager,
-                "Abdo1234@"
+                "Abdo1234@",
+                Gender.Male
             );
         }
 
@@ -55,7 +69,9 @@ namespace HomeTech.Infrastructure
             string email,
             string name,
             string role,
-            string password)
+            string password,
+            Gender gender
+            )
         {
             var user = await userManager.FindByEmailAsync(email);
             if (user != null) return;
@@ -64,6 +80,7 @@ namespace HomeTech.Infrastructure
             {
                 Email = email,
                 FullName = name,
+                Gender = gender,
                 IsActive = true,
                 UserName = email,
                 EmailConfirmed = true,
