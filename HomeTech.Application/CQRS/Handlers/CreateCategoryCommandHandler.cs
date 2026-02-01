@@ -30,7 +30,7 @@ namespace HomeTech.Application.CQRS.Handlers
             CancellationToken cancellationToken
         )
         {
-            var category = new Category(command.Dto.name);
+            var category = new Category(command.Dto.name, command.Dto.isActive);
 
             await _categoryRepository.AddAsync(category, cancellationToken);
             await _categoryRepository.SaveChangeAsync(cancellationToken);

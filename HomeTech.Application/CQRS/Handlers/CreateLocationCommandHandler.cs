@@ -30,7 +30,8 @@ namespace HomeTech.Application.CQRS.Handlers
             var location = new Location
             {
                 Name = request.Dto.Name,
-                ParentId = request.Dto.ParentId
+                ParentId = request.Dto.ParentId,
+                IsActive = request.Dto.isActive
             };
 
             await _locationRepository.AddAsync(location, ct);

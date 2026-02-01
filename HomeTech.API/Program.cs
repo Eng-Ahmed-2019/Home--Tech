@@ -135,6 +135,7 @@ builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ITokenReplayService, TokenReplayService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IHomeTechServiceRepository, HomeTechServiceRepository>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

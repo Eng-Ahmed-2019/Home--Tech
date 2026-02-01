@@ -17,6 +17,7 @@ namespace HomeTech.Infrastructure.Data
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
         public DbSet<Location> Locations => Set<Location>();
         public DbSet<Category> Categories => Set<Category>();
+        public DbSet<HomeTechService> HomeTechServices => Set<HomeTechService>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -66,6 +67,20 @@ namespace HomeTech.Infrastructure.Data
 
                 e.HasIndex(x => x.CreatedAt);
             });
+
+            builder.Entity<HomeTechService>(e =>
+            {
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+                e.HasIndex(x => x.Name).IsUnique();
+                e.HasIndex(x => x.IsActive);
+
+                e.HasQueryFilter(x => !x.IsDeleted);
+            });
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken ct)
@@ -85,7 +100,6 @@ namespace HomeTech.Infrastructure.Data
                     case EntityState.Deleted:
                         entry.State = EntityState.Modified;
                         entry.Entity.SoftDelete();
-                        entry.Entity.MarkUpdated();
                         break;
                 }
             }

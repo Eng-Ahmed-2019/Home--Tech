@@ -8,10 +8,10 @@
 
         private Category() { }
 
-        public Category(string name)
+        public Category(string name, bool isActive)
         {
             SetName(name);
-            IsActive = true;
+            IsActive = isActive;
         }
 
         public void SetName(string name)

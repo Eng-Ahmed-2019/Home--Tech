@@ -2,6 +2,7 @@
 {
     public record CreateLocationDto(
         string Name,
-        int? ParentId
+        int? ParentId,
+        bool isActive
     );
 }

@@ -49,7 +49,6 @@ namespace HomeTech.Infrastructure.Services
             if (location == null) return Task.FromResult(false);
 
             location.SoftDelete();
-            location.MarkUpdated();
 
             return Task.FromResult(true);
         }

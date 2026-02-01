@@ -53,7 +53,6 @@ namespace HomeTech.Infrastructure.Services
             if (category == null) return Task.FromResult(false);
 
             category.SoftDelete();
-            category.MarkUpdated();
             return Task.FromResult(true);
         }
 

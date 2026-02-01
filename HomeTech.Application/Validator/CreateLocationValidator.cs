@@ -22,6 +22,10 @@ namespace HomeTech.Application.Validator
                     !await _locationRepository
                         .ExistsByNameAsync(dto.Dto.Name, null, ct))
                 .WithMessage("هذا الاسم موجود بالفعل");
+
+            RuleFor(l => l.Dto.isActive)
+                .NotNull()
+                .WithMessage("حالة الموقع مطلوبة");
         }
     }
 }

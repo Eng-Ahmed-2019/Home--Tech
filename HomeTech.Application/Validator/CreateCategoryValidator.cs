@@ -22,6 +22,10 @@ namespace HomeTech.Application.Validator
                     !await _categoryRepository.ExistsByNameAsync(dto.Dto.name.Trim(), null, ct)
                 )
                 .WithMessage("هذا الاسم مستخدم بالفعل");
+
+            RuleFor(l => l.Dto.isActive)
+                .NotNull()
+                .WithMessage("حالة الفئة مطلوبة");
         }
     }
 }

@@ -11,6 +11,7 @@ namespace HomeTech.Application.Interfaces
         DbSet<Category> Categories { get; }
         DbSet<AuditLog> AuditLogs { get; }
         DbSet<BannedIp> BannedIps { get; }
+        DbSet<HomeTechService> HomeTechServices { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
