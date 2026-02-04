@@ -22,7 +22,7 @@ namespace HomeTech.Application.CQRS.Handlers
             var result = await _locationRepository
                 .GetAllActiveAsync(ct);
 
-            return result.Select(x => new LocationDto(x.Id, x.Name)).ToList();
+            return result.Select(x => new LocationDto(x.Id, x.Name.Trim())).ToList();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace HomeTech.Application.CQRS.Handlers
         {
             var location = new Location
             {
-                Name = request.Dto.Name,
+                Name = request.Dto.Name.Trim(),
                 ParentId = request.Dto.ParentId,
                 IsActive = request.Dto.isActive
             };
@@ -49,7 +49,7 @@ namespace HomeTech.Application.CQRS.Handlers
                 userId: UserId,
                 sessionId: SessionId,
                 action: "Create Location",
-                reason: $"Created location: {location.Name}",
+                reason: $"Created location: {location.Name.Trim()}",
                 ipAddress: _httpContextAccessor.HttpContext!
                     .Connection.RemoteIpAddress!.ToString() ?? "UnKnown",
                 ct

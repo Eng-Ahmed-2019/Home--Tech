@@ -47,7 +47,7 @@ namespace HomeTech.Application.CQRS.Handlers
                 userId: UserId,
                 sessionId: SessionId,
                 action: "Delete Category",
-                reason: $"Deleted Category: {category.Name}",
+                reason: $"Deleted Category: {category.Name.Trim()}",
                 ipAddress: _httpContextAccessor.HttpContext!
                     .Connection.RemoteIpAddress!.ToString() ?? "UnKnown",
                 cancellationToken

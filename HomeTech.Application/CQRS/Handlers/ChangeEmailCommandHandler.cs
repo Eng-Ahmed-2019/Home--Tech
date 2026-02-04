@@ -39,7 +39,7 @@ public class ChangeEmailCommandHandler
         var user = await _userManager.FindByIdAsync(request.UserId)
             ?? throw new UserNotFoundException("هذا المستخدم غير موجود");
 
-        user.PendingEmail = request.NewEmail;
+        user.PendingEmail = request.NewEmail.Trim();
         await _userManager.UpdateAsync(user);
 
         var token = WebEncoders.Base64UrlEncode(
@@ -53,13 +53,13 @@ public class ChangeEmailCommandHandler
 
         await _emailQueue.EnqueueEmailAsync(new EmailJob
         {
-            To = request.NewEmail,
+            To = request.NewEmail.Trim(),
             Subject = "تأكيد تغيير البريد الإلكتروني",
             Template = EmailTemplate.ConfirmEmail,
             Model = new ConfirmEmailModel
             {
-                FullName = user.FullName,
-                ConfirmLink = link
+                FullName = user.FullName.Trim(),
+                ConfirmLink = link.Trim()
             }
         });
 

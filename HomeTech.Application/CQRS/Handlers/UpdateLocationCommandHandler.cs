@@ -30,7 +30,7 @@ namespace HomeTech.Application.CQRS.Handlers
             var location = await _locationRepository.GetByIdAsync(command.Dto.Id, cancellationToken);
             if (location == null) return false;
 
-            location.Name = command.Dto.Name;
+            location.Name = command.Dto.Name.Trim();
             location.IsActive = command.Dto.IsActive;
 
             await _locationRepository.Update(location);
@@ -48,7 +48,7 @@ namespace HomeTech.Application.CQRS.Handlers
                 userId: UserId,
                 sessionId: SessionId,
                 action: "Updated Location",
-                reason: $"Update location: {location.Name}",
+                reason: $"Update location: {location.Name.Trim()}",
                 ipAddress: _httpContextAccessor.HttpContext!
                     .Connection.RemoteIpAddress!.ToString() ?? "UnKnown",
                 cancellationToken);

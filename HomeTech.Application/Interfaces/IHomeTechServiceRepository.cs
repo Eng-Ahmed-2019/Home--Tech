@@ -4,6 +4,7 @@ namespace HomeTech.Application.Interfaces
 {
     public interface IHomeTechServiceRepository
     {
+
         Task AddAsync(HomeTechService service, CancellationToken ct);
         Task<bool> UpdateAsync(HomeTechService service, CancellationToken ct);
         Task<bool> SoftDeleteAsync(HomeTechService service, CancellationToken ct);

@@ -13,6 +13,7 @@ namespace HomeTech.Application.Interfaces
         DbSet<BannedIp> BannedIps { get; }
         DbSet<HomeTechService> HomeTechServices { get; }
 
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

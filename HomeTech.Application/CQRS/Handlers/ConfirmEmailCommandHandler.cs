@@ -31,11 +31,11 @@ namespace HomeTech.Application.CQRS.Handlers
             ConfirmEmailCommand request,
             CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email)
+            var user = await _userManager.FindByEmailAsync(request.Email.Trim())
                 ?? throw new EmailNotFoundException("المستخدم غير موجود");
 
             var decodedToken = Encoding.UTF8.GetString(
-                WebEncoders.Base64UrlDecode(request.Token))
+                WebEncoders.Base64UrlDecode(request.Token.Trim()))
                 ?? throw new TokenNotFoundException("رابط التأكيد غير صالح أو منتهي");
 
             var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
@@ -44,8 +44,8 @@ namespace HomeTech.Application.CQRS.Handlers
 
             if (!string.IsNullOrEmpty(user.PendingEmail))
             {
-                user.Email = user.PendingEmail;
-                user.UserName = user.PendingEmail;
+                user.Email = user.PendingEmail.Trim();
+                user.UserName = user.PendingEmail.Trim();
                 user.PendingEmail = null;
                 user.EmailConfirmed = true;
 

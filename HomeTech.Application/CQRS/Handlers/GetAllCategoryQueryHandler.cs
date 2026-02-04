@@ -21,7 +21,7 @@ namespace HomeTech.Application.CQRS.Handlers
         {
             var result = await _categoryRepository.GetAllAsync(cancellationToken);
 
-            return result.Select(r => new CategoryDto(r.Id, r.Name)).ToList();
+            return result.Select(r => new CategoryDto(r.Id, r.Name.Trim())).ToList();
         }
     }
 }

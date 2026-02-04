@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using HomeTech.Application.CQRS.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
+// Add services to the container...
 builder.Services.AddDbContext<HomeTechDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -56,6 +56,11 @@ builder.Services.AddRateLimiter(r =>
         o.Window = TimeSpan.FromMinutes(10);
         o.PermitLimit = 3;
     });
+    r.AddFixedWindowLimiter("services", o =>
+    {
+        o.Window = TimeSpan.FromMinutes(1);
+        o.PermitLimit = 30;
+    });
 });
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -72,6 +77,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateCategoryValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateCategoryValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateHomeTechServiceValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateHomeTechServicesValidator>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -113,6 +120,14 @@ builder.Services.AddMediatR(cfg =>
         typeof(ReactivateAccountCommandHandler).Assembly);
     cfg.RegisterServicesFromAssembly(
         typeof(ChangePasswordCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(CreateHomeTechServicesCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(UpdateHomeTechServiceCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(DeleteHomeTechServicesCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(GetAllHomeTechServicesQueryHandler).Assembly);
 });
 
 builder.Services.AddTransient(

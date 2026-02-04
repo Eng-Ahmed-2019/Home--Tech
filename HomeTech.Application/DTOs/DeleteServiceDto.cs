@@ -2,6 +2,7 @@
 {
     public class DeleteServiceDto
     {
+
         public int Id { get; set; }
     }
 }

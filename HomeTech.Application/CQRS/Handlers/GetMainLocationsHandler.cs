@@ -30,7 +30,7 @@ namespace HomeTech.Application.CQRS.Handlers
                 PageSize = pageSize,
                 TotalCount = result.TotalCount,
                 Items = result.Items
-                    .Select(x => new LocationDto(x.Id, x.Name))
+                    .Select(x => new LocationDto(x.Id, x.Name.Trim()))
                     .ToList()
             };
         }

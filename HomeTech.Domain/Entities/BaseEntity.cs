@@ -7,6 +7,7 @@
         public DateTime? UpdatedAt { get; private set; }
         public bool IsDeleted { get; private set; }
 
+
         public void MarkCreated()
             => CreatedAt = DateTime.UtcNow;
 

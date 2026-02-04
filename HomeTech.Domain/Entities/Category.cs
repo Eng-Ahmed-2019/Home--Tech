@@ -1,10 +1,14 @@
-﻿namespace HomeTech.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HomeTech.Domain.Entities
 {
     public class Category : BaseEntity
     {
         public string Name { get; private set; } = null!;
         public bool IsActive { get; private set; }
-        public byte[] RowVersion { get; private set; } = null!;
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; } = null!;
 
         private Category() { }
 

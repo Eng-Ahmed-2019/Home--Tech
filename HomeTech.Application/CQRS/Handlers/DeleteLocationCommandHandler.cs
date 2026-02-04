@@ -46,7 +46,7 @@ namespace HomeTech.Application.CQRS.Handlers
                 userId: UserId,
                 sessionId: SessionId,
                 action: "Updated Location",
-                reason: $"Update location: {location.Name}",
+                reason: $"Update location: {location.Name.Trim()}",
                 ipAddress: _httpContextAccessor.HttpContext!
                     .Connection.RemoteIpAddress!.ToString() ?? "UnKnown",
                 ct);

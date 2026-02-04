@@ -34,7 +34,7 @@ public class LoginQueryHandler
         LoginQuery query,
         CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByEmailAsync(query.Dto.Email);
+        var user = await _userManager.FindByEmailAsync(query.Dto.Email.Trim());
 
         if (user is null)
             throw new unAuthorizedException("فشل عملية الدخول, برجاء المحاولة مرة اخري");
@@ -47,7 +47,7 @@ public class LoginQueryHandler
 
         var result = await _signInManager.CheckPasswordSignInAsync(
             user,
-            query.Dto.Password,
+            query.Dto.Password.Trim(),
             lockoutOnFailure: true);
 
         if (!result.Succeeded)

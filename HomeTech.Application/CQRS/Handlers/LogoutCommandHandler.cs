@@ -21,6 +21,7 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, bool>
     {
         var session = await _db.UserSessions
             .FirstOrDefaultAsync(x => x.Id == request.SessionId, ct);
+
         if (session == null) return false;
 
         session.IsRevoked = true;

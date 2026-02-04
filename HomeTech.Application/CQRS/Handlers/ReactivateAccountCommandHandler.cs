@@ -34,7 +34,7 @@ namespace HomeTech.Application.CQRS.Handlers
             ReactivateAccountCommand request,
             CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email)
+            var user = await _userManager.FindByEmailAsync(request.Email.Trim())
                 ?? throw new UserNotFoundException("هذا المستخدم غير موجود");
 
             if (user.IsActive) return "الحساب مفعل بالفعل";
@@ -55,8 +55,8 @@ namespace HomeTech.Application.CQRS.Handlers
                 Template = EmailTemplate.ConfirmEmail,
                 Model = new ConfirmEmailModel
                 {
-                    FullName = user.FullName,
-                    ConfirmLink = link
+                    FullName = user.FullName.Trim(),
+                    ConfirmLink = link.Trim()
                 }
             });
 

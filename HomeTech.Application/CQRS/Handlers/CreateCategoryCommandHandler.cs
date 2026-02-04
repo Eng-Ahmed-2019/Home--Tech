@@ -30,7 +30,7 @@ namespace HomeTech.Application.CQRS.Handlers
             CancellationToken cancellationToken
         )
         {
-            var category = new Category(command.Dto.name, command.Dto.isActive);
+            var category = new Category(command.Dto.name.Trim(), command.Dto.isActive);
 
             await _categoryRepository.AddAsync(category, cancellationToken);
             await _categoryRepository.SaveChangeAsync(cancellationToken);
@@ -47,7 +47,7 @@ namespace HomeTech.Application.CQRS.Handlers
                 userId: UserId,
                 sessionId: SessionId,
                 action: "Create Category",
-                reason: $"Created Category: {category.Name}",
+                reason: $"Created Category: {category.Name.Trim()}",
                 ipAddress: _httpContextAccessor.HttpContext!
                     .Connection.RemoteIpAddress!.ToString() ?? "UnKnown",
                 cancellationToken

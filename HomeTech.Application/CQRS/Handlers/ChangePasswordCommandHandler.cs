@@ -38,8 +38,8 @@ namespace HomeTech.Application.CQRS.Handlers
 
             var result = await _userManager.ChangePasswordAsync(
                 user,
-                request.Dto.CurrentPassword,
-                request.Dto.NewPassword
+                request.Dto.CurrentPassword.Trim(),
+                request.Dto.NewPassword.Trim()
             );
             if (!result.Succeeded)
                 throw new PasswordException("كلمة المرور الحالية غير صحيحة");

@@ -19,6 +19,7 @@ namespace HomeTech.Infrastructure.Data
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<HomeTechService> HomeTechServices => Set<HomeTechService>();
 
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -34,10 +35,30 @@ namespace HomeTech.Infrastructure.Data
                     .IsRequired()
                     .HasMaxLength(100);
 
+                e.Property(x => x.RowVersion)
+                    .IsRowVersion();
+
                 e.HasOne(x => x.Parent)
                     .WithMany(x => x.SubLocations)
                     .HasForeignKey(x => x.ParentId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasQueryFilter(x => !x.IsDeleted);
+            });
+
+            builder.Entity<HomeTechService>(e =>
+            {
+                e.HasKey(x => x.Id);
+
+                e.HasIndex(x => x.Name).IsUnique();
+                e.HasIndex(x => x.IsActive);
+
+                e.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+                e.Property(x => x.RowVersion)
+                    .IsRowVersion();
 
                 e.HasQueryFilter(x => !x.IsDeleted);
             });
@@ -66,20 +87,6 @@ namespace HomeTech.Infrastructure.Data
                     .HasMaxLength(64);
 
                 e.HasIndex(x => x.CreatedAt);
-            });
-
-            builder.Entity<HomeTechService>(e =>
-            {
-                e.HasKey(x => x.Id);
-
-                e.Property(x => x.Name)
-                .IsRequired()
-                .HasMaxLength(100);
-
-                e.HasIndex(x => x.Name).IsUnique();
-                e.HasIndex(x => x.IsActive);
-
-                e.HasQueryFilter(x => !x.IsDeleted);
             });
         }
 

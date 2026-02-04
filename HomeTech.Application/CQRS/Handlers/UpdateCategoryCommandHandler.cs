@@ -32,7 +32,7 @@ namespace HomeTech.Application.CQRS.Handlers
             var category = await _categoryRepository.GetByIdAsync(command.Dto.id, cancellationToken);
             if (category == null) return false;
 
-            category.SetName(command.Dto.name);
+            category.SetName(command.Dto.name.Trim());
             category.SetActive(command.Dto.isActive);
 
             await _categoryRepository.UpdateAsync(category);
@@ -50,7 +50,7 @@ namespace HomeTech.Application.CQRS.Handlers
                 userId: UserId,
                 sessionId: SessionId,
                 action: "Update Category",
-                reason: $"Updated Category: {category.Name}",
+                reason: $"Updated Category: {category.Name.Trim()}",
                 ipAddress: _httpContextAccessor.HttpContext!
                     .Connection.RemoteIpAddress!.ToString() ?? "UnKnown",
                 cancellationToken

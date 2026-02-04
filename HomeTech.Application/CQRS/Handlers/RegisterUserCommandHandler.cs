@@ -41,19 +41,19 @@ namespace HomeTech.Application.CQRS.Handlers
             RegisterUserCommand request,
             CancellationToken cancellationToken)
         {
-            if (await _userManager.FindByEmailAsync(request.Dto.Email) != null)
+            if (await _userManager.FindByEmailAsync(request.Dto.Email.Trim()) != null)
                 throw new FailedRegisterUserException("البريد الإلكتروني مستخدم بالفعل");
 
             var user = new ApplicationUser
             {
-                FullName = request.Dto.FullName,
-                UserName = request.Dto.Email,
-                Email = request.Dto.Email,
+                FullName = request.Dto.FullName.Trim(),
+                UserName = request.Dto.Email.Trim(),
+                Email = request.Dto.Email.Trim(),
                 Gender = request.Dto.Gender
             };
 
             var result = await _userManager.CreateAsync(
-                user, request.Dto.Password
+                user, request.Dto.Password.Trim()
             );
 
             if (!result.Succeeded)
@@ -87,8 +87,8 @@ namespace HomeTech.Application.CQRS.Handlers
                 Template = EmailTemplate.ConfirmEmail,
                 Model = new ConfirmEmailModel
                 {
-                    FullName = user.FullName,
-                    ConfirmLink = confirmLink
+                    FullName = user.FullName.Trim(),
+                    ConfirmLink = confirmLink.Trim()
                 }
             });
 

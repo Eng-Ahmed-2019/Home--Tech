@@ -35,7 +35,7 @@ namespace HomeTech.Application.CQRS.Handlers
             if (!user.IsActive)
                 throw new FailedUpdateUserException("لا يمكن تعديل حساب غير مفعل");
 
-            user.FullName = request.Dto.FullName;
+            user.FullName = request.Dto.FullName.Trim();
             user.Gender = request.Dto.Gender;
 
             var result = await _userManager.UpdateAsync(user);

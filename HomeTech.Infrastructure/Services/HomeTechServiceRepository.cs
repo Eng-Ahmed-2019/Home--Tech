@@ -8,6 +8,7 @@ namespace HomeTech.Infrastructure.Services
     {
         private readonly IApplicationDbContext _context;
 
+
         public HomeTechServiceRepository(IApplicationDbContext context)
         {
             _context = context;
@@ -37,7 +38,7 @@ namespace HomeTech.Infrastructure.Services
             if (service == null) return Task.FromResult(false);
 
             service.MarkUpdated();
-            _context.SaveChangesAsync(ct);
+            _context.HomeTechServices.Update(service);
 
             return Task.FromResult(true);
         }
