@@ -19,7 +19,10 @@ namespace HomeTech.Application.CQRS.Handlers
         {
             var result = await _repository.GetAllAsync(cancellationToken);
 
-            return result.Select(r => new ServicesDto(r.Id, r.Name.Trim(), r.Description.Trim())).ToList();
+            return result.Select(r => new ServicesDto(r.Id, r.Name.Trim(),
+                r.Description.Trim(),
+                r.Price,
+                r.IsActive)).ToList();
         }
     }
 }

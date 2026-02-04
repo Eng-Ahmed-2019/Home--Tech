@@ -3,6 +3,8 @@
     public record ServicesDto(
         int id,
         string name,
-        string description
+        string description,
+        decimal price,
+        bool isActive
     );
 }

@@ -2,6 +2,7 @@
 {
     public record CategoryDto(
         int id,
-        string name
+        string name,
+        bool isActive
     );
 }
