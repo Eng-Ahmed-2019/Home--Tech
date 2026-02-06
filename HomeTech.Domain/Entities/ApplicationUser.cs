@@ -10,5 +10,6 @@ namespace HomeTech.Domain.Entities
         public Gender Gender { set; get; }
         public string? PendingEmail { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? ProfileImagePath { get; set; }
     }
 }

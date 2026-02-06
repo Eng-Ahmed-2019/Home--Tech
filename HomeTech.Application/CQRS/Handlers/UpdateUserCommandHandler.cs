@@ -14,15 +14,18 @@ namespace HomeTech.Application.CQRS.Handlers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuditService _audit;
         private readonly IHttpContextAccessor _http;
+        private readonly IFileStorageService _fileStorage;
 
         public UpdateUserCommandHandler(
             UserManager<ApplicationUser> userManager,
             IAuditService audit,
-            IHttpContextAccessor http)
+            IHttpContextAccessor http,
+            IFileStorageService fileStorage)
         {
             _userManager = userManager;
             _audit = audit;
             _http = http;
+            _fileStorage = fileStorage;
         }
 
         public async Task<string> Handle(
@@ -34,6 +37,14 @@ namespace HomeTech.Application.CQRS.Handlers
 
             if (!user.IsActive)
                 throw new FailedUpdateUserException("لا يمكن تعديل حساب غير مفعل");
+
+            if (request.Dto.formFile != null)
+            {
+                _fileStorage.Delete(user.ProfileImagePath);
+
+                user.ProfileImagePath =
+                    await _fileStorage.SaveAsync(request.Dto.formFile, "users");
+            }
 
             user.FullName = request.Dto.FullName.Trim();
             user.Gender = request.Dto.Gender;

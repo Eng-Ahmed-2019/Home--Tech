@@ -8,5 +8,6 @@
         public DateTime ExpiresAt { get; set; }
         public bool IsRevoked { get; set; }
         public string IpAddress { get; set; } = default!;
+        public DateTime CreatedAt { get; set; }
     }
 }

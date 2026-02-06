@@ -25,7 +25,7 @@ namespace HomeTech.API.Controllers
         [EnableRateLimiting("register")]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public async Task<IActionResult> Register(
-            [FromBody] RegisterUserDto dto,
+            [FromForm] RegisterUserDto dto,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(
@@ -120,7 +120,7 @@ namespace HomeTech.API.Controllers
         [HttpPut("profile")]
         [EnableRateLimiting("profile")]
         public async Task<IActionResult> Update(
-            [FromBody] UpdateUserDto dto,
+            [FromForm] UpdateUserDto dto,
             CancellationToken cancellationToken
         )
         {
@@ -333,6 +333,40 @@ namespace HomeTech.API.Controllers
                 result,
                 "تم التغيير بنجاح"
             ));
+        }
+
+        [Authorize]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile(CancellationToken ct)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(
+                    ApiResponse<string>.CreateErrorResponse(
+                        new List<string> { "عملية غير ناجحة" },
+                        "فشل جلب البيانات"
+                    )
+                );
+            }
+
+            var result = await _mediator.Send(new GetProfileQuery(userId), ct);
+            if (result == null)
+            {
+                return BadRequest(
+                    ApiResponse<UserProfileDto>.CreateErrorResponse(
+                        new List<string> { "عملية فاشلة" },
+                        "فشل جلب البيانات"
+                    )
+                );
+            }
+
+            return Ok(
+                ApiResponse<UserProfileDto>.CreateSuccessResponse(
+                    result,
+                    "تم جلب البيانات"
+                )
+            );
         }
     }
 }

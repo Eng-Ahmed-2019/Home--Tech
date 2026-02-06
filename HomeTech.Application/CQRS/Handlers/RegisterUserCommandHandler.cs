@@ -22,19 +22,22 @@ namespace HomeTech.Application.CQRS.Handlers
         private readonly IConfiguration _config;
         private readonly IAuditService _audit;
         private readonly IHttpContextAccessor _http;
+        private readonly IFileStorageService _fileStorage;
 
         public RegisterUserCommandHandler(
             UserManager<ApplicationUser> userManager,
             IEmailQueue emailQueue,
             IConfiguration config,
             IAuditService audit,
-            IHttpContextAccessor http)
+            IHttpContextAccessor http,
+            IFileStorageService fileStorage)
         {
             _userManager = userManager;
             _emailQueue = emailQueue;
             _config = config;
             _audit = audit;
             _http = http;
+            _fileStorage = fileStorage;
         }
 
         public async Task<string> Handle(
@@ -44,12 +47,15 @@ namespace HomeTech.Application.CQRS.Handlers
             if (await _userManager.FindByEmailAsync(request.Dto.Email.Trim()) != null)
                 throw new FailedRegisterUserException("البريد الإلكتروني مستخدم بالفعل");
 
+            var imagePath = await _fileStorage.SaveAsync(request.Dto.formFile, "users");
+
             var user = new ApplicationUser
             {
                 FullName = request.Dto.FullName.Trim(),
                 UserName = request.Dto.Email.Trim(),
                 Email = request.Dto.Email.Trim(),
-                Gender = request.Dto.Gender
+                Gender = request.Dto.Gender,
+                ProfileImagePath = imagePath
             };
 
             var result = await _userManager.CreateAsync(

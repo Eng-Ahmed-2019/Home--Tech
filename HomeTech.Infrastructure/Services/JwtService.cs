@@ -58,7 +58,8 @@ public class JwtService : IJwtService
             ExpiresAt = DateTime.UtcNow.AddDays(
                 int.Parse(_config["Jwt:RefreshTokenDays"]!)),
             IpAddress = ipAddress,
-            IsRevoked = false
+            IsRevoked = false,
+            CreatedAt = DateTime.UtcNow,
         });
         await _context.SaveChangesAsync(CancellationToken.None);
 

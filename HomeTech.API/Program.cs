@@ -128,6 +128,8 @@ builder.Services.AddMediatR(cfg =>
         typeof(DeleteHomeTechServicesCommandHandler).Assembly);
     cfg.RegisterServicesFromAssembly(
         typeof(GetAllHomeTechServicesQueryHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(
+        typeof(GetProfileQueryHandler).Assembly);
 });
 
 builder.Services.AddTransient(
@@ -151,6 +153,7 @@ builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ITokenReplayService, TokenReplayService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IHomeTechServiceRepository, HomeTechServiceRepository>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -175,6 +178,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseMiddleware<SessionRefreshMiddleware>();
